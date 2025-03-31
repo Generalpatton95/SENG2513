@@ -1,61 +1,52 @@
 // Home.jsx
-
 import React from "react";
 
 const Home = () => {
     return (
         <>
-            {/* New IMDb-Inspired Design */}
+            {/* Home Container */}
             <div className="home-container" style={{ padding: "20px", backgroundColor: "#121212", color: "white", fontFamily: "Arial, sans-serif" }}>
                 
-                {/* Header Section */}
-                <header className="header" style={{ textAlign: "center", marginBottom: "20px" }}>
-                    <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>Welcome to Movie Recommendation System</h1>
-                    <p style={{ fontSize: "1.2rem", color: "#ccc" }}>Discover trending and top-rated movies.</p>
-                </header>
+                {/* Hero Banner */}
+                <section className="hero-banner" style={{
+                    width: "100%",
+                    height: "450px",  // Increased height to make space for the larger poster
+                    backgroundColor: "#1e1e1e", // Dark background to simulate a banner
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    padding: "20px",
+                    borderRadius: "10px",
+                    marginBottom: "20px"
+                }}>
+                    <div style={{ maxWidth: "850px" }}>
+                        {/* Larger Movie Poster Placeholder */}
+                        <div className="movie-poster" style={{
+                            width: "100%",
+                            height: "300px",  // Increased height for the poster
+                            backgroundColor: "#333",
+                            borderRadius: "8px",
+                            marginBottom: "15px"  // Increased margin to space things out
+                        }}></div>
+                        
+                        <h2 style={{ fontSize: "2rem", fontWeight: "bold" }}>Spider-Man: No Way Home</h2>
+                        <p style={{ fontSize: "1.2rem", color: "#ccc" }}>
+                            The multiverse is unleashed as Spider-Man faces his greatest challenge yet.
+                        </p>
+                    </div>
+                </section>
 
-                {/* Search Bar */}
-                <div className="search-bar" style={{ display: "flex", justifyContent: "center", marginBottom: "30px" }}>
-                    <input 
-                        type="text" 
-                        placeholder="Search" 
-                        style={{ 
-                            padding: "10px", 
-                            borderRadius: "20px", 
-                            border: "none", 
-                            outline: "none", 
-                            width: "650px", 
-                            fontSize: "1rem" 
-                        }} 
-                    />
-                    <button 
-                        style={{ 
-                            padding: "10px 15px", 
-                            marginLeft: "10px", 
-                            borderRadius: "20px", 
-                            border: "none", 
-                            backgroundColor: "#444", /* Dark gray */
-                            color: "white",
-                            fontSize: "1rem", 
-                            fontWeight: "bold", 
-                            cursor: "pointer" 
-                        }}
-                    >
-                        Search
-                    </button>
-                </div>
-                
                 {/* Recommended Movies Section */}
                 <section className="recommended-section">
                     <h2 style={{ fontSize: "1.5rem", marginBottom: "15px" }}>Recommended For You</h2>
-                    <div className="movie-recommend-container" style={{ overflowX: "auto", width: "100%", paddingBottom: "20px", display: "flex", justifyContent: "center" }}>
+                    <div className="movie-recommend-container" style={{ overflowX: "auto", width: "100%", paddingBottom: "10px", display: "flex", justifyContent: "center" }}>
                         <div style={{ display: "flex", flexWrap: "nowrap" }}>
                             {[
                                 "Shawshank Redemption", "Forrest Gump", "Fight Club", "The Prestige", "Whiplash",
-                                "Gladiator", "Parasite", "Inglourious Basterds"
+                                "Gladiator", "Parasite", "The Imitation Game"
                             ].map((movie, index) => (
                                 <div key={index} className="movie-card" style={{ backgroundColor: "#1e1e1e", padding: "10px", borderRadius: "10px", textAlign: "center", width: "150px", marginRight: "15px" }}>
-                                    {/* Placeholder for Movie Poster */}
                                     <div className="movie-poster" style={{ width: "100%", height: "200px", backgroundColor: "#333", borderRadius: "8px", marginBottom: "10px" }}></div>
                                     <h3 className="movie-title" style={{ fontSize: "1.2rem" }}>{movie}</h3>
                                 </div>
@@ -74,7 +65,6 @@ const Home = () => {
                                 "The Dark Knight", "Pulp Fiction", "The Godfather"
                             ].map((movie, index) => (
                                 <div key={index} className="movie-card" style={{ backgroundColor: "#1e1e1e", padding: "10px", borderRadius: "10px", textAlign: "center", width: "150px", marginRight: "15px" }}>
-                                    {/* Placeholder for Movie Poster */}
                                     <div className="movie-poster" style={{ width: "100%", height: "200px", backgroundColor: "#333", borderRadius: "8px", marginBottom: "10px" }}></div>
                                     <h3 className="movie-title" style={{ fontSize: "1.2rem" }}>{movie}</h3>
                                 </div>
