@@ -1,41 +1,155 @@
+/* Navbar Styling */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #333;
-    color: white;
-  }
-  
-  .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+}
+
+.nav-logo {
+  height: 53px;
+  width: 53px;
+  margin-right: -690px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links li {
+  display: inline;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+  color: #f0a500;
+}
+
+
+
+
+/* Search Bar */
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  width: 650px;
+  font-size: 1rem;
+}
+
+/* Dropdown */
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-button {
+  margin-left: 10px;
+  padding: 10px 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: #444;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.dropdown-button.active {
+  background-color: #006EFF;
+}
+
+.dropdown-counter {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: white;
+  color: #006EFF;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #222;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 220px;
+  z-index: 10;
+  margin-top: 5px;
+}
+
+/* Dropdown Items */
+.dropdown-item {
+  padding: 6px 10px;
+  border-radius: 15px;
+  border: none;
+  background-color: #555;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item.selected {
+  background-color: #006EFF;
+}
+
+/* Search Button */
+.search-button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  background-color: #006EFF;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Responsive Navbar */
+@media screen and (max-width: 768px) {
   .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 15px;
-  }
-  
-  .nav-links li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s;
-  }
-  
-  .nav-links li a:hover {
-    color: #f0a500;
-  }
-  
-  @media screen and (max-width: 768px) {
-    .nav-links {
       flex-direction: column;
-      display: none; /* Initially hidden for smaller screens */
-    }
-  
-    .nav-links.active {
-      display: flex; /* Show links when toggled */
-    }
+      display: none;
   }
+  
+  .nav-links.active {
+      display: flex;
+  }
+}
