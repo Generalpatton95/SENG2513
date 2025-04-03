@@ -1,5 +1,3 @@
-// Movies.jsx
-
 import React from "react";
 import { useEffect, useState } from "react";
 
@@ -8,28 +6,7 @@ const Movies = () => {
   const [movie, setmovie] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const parseMovieData = (data) => {
-    // Split by newline to get individual objects
-    return data.split('\n')
-      .map(line => {
-        // Skip empty lines
-        if (!line.trim()) return null;
-        
-        // Use regex to extract the values
-        const idMatch = line.match(/id: '([^']+)'/);
-        const tmdbIdMatch = line.match(/tmdbId: (\d+)/);
-        
-        if (idMatch && tmdbIdMatch) {
-          return {
-            id: idMatch[1],
-            tmdbId: parseInt(tmdbIdMatch[1])
-          };
-        }
-        return null;
-      })
-      .filter(item => item !== null); // Remove any null items
-  };
-
+    
   useEffect(() => {
     
     fetch(`/api/movie`)
@@ -41,8 +18,7 @@ const Movies = () => {
         return res.json();
       })
       .then((data) => {
-          const parsedMovies = parseMovieData(data);
-          setmovie(parsedMovies); // Ensure data is an array
+          setmovie(data); // Ensure data is an array
           setLoading(false);
       })
       .catch((error) => {
@@ -64,10 +40,9 @@ const Movies = () => {
             <h1>Movies</h1>
         </div>
         <div>
-          {movie.length > 0 ? (
-            console.log(movie),
+          {Array.isArray(movie) && movie.length > 0 ? (
             movie.map((data) => (
-                <p key={data.id}>{data.tmdbId}</p>
+                <p key={data.id}>{data.primaryTitle}</p>
             ))
           ) : (
             <p>No Movies found or data is not in expected format.</p>
