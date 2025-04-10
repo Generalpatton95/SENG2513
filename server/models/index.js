@@ -1,17 +1,6 @@
 import sequelize from '../config/database.js';
 import User from './user.js';
-import Movie from './movie.js'; 
 
-
- 
-const options = { //get from api
-  method: 'GET',
-  url: 'https://imdb236.p.rapidapi.com/imdb/',
-  headers: {
-    'x-rapidapi-key': 'c07d5b540fmsh06d48509516eda8p15cf75jsn5d66c8561424',
-    'x-rapidapi-host': 'imdb236.p.rapidapi.com'
-  }
-};
 
 export async function fetchData() {
 	try {
@@ -39,25 +28,6 @@ const syncModels = async () => {
         });
     }
 
-    const movies = [];
-    for (let i = 1; i <= 10; i++) {
-      movies.push({
-          
-          primaryTitle: `Movie ${i}`,
-          releaseDate: `Movie ${i}`,
-          description: `Plot: ${i}`,
-          // Add other properties as needed
-      });
-  }
-
-  Movie.bulkCreate(movies)//insert          
-        .then(() => {
-            console.log('Users inserted successfully.');
-        })
-        .catch((error) => {
-            console.error('Error inserting users:', error);
-        });
-
     // Insert users into the table
     User.bulkCreate(users)
         .then(() => {
@@ -70,6 +40,6 @@ const syncModels = async () => {
   };
   
  export {
-    sequelize, User, Movie, syncModels
+    sequelize, User, syncModels
   };
   
