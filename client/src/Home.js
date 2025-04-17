@@ -1,7 +1,40 @@
 import "./Home.css";
 import React from "react";
+import { useEffect, useState } from "react";
 
 const Home = () => {
+     const [movie, setmovie] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+        
+      useEffect(() => {
+        
+        fetch(`/api/movie`)
+          .then((res) => {
+            console.log("Response status:", res.status);
+            if (!res.ok) {
+              throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            return res.json();
+          })
+          .then((data) => {
+              setmovie(data); // Ensure data is an array
+              setLoading(false);
+          })
+          .catch((error) => {
+            setError(error.message);
+            setLoading(false);
+          });
+      }, []);
+    
+      
+      if (loading) return <div>Loading...</div>;
+      if (error) return <div>Error: {error}</div>;
+
+      
+  const featuredMovie = movie.length > 0 ? movie[0] : null;
+  const trendingMovies = movie.slice(0, 8);
+
     return (
         <>
             {/* Home Container */}
@@ -13,9 +46,9 @@ const Home = () => {
                         {/* Larger Movie Poster Placeholder */}
                         <div className="movie-poster"></div>
                         
-                        <h2>Spider-Man: No Way Home</h2>
+                        <h2> {featuredMovie ? featuredMovie.primaryTitle : "Movie Title"} </h2>
                         <p>
-                            The multiverse is unleashed as Spider-Man faces his greatest challenge yet.
+                            {featuredMovie ? featuredMovie.description: "Movie description"}
                         </p>
                     </div>
                 </section>
@@ -43,13 +76,10 @@ const Home = () => {
                     <h2>Trending Now</h2>
                     <div className="movie-trend-container">
                         <div className="movie-list">
-                            {[
-                                "Dune", "Avatar", "Interstellar", "Inception", "The Matrix", 
-                                "The Dark Knight", "Pulp Fiction", "The Godfather"
-                            ].map((movie, index) => (
+                            {trendingMovies.map((movie, index) => (
                                 <div key={index} className="movie-card">
                                     <div className="movie-poster"></div>
-                                    <h3 className="movie-title">{movie}</h3>
+                                    <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
                                 </div>
                             ))}
                         </div>
