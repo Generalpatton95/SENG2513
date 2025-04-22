@@ -9,7 +9,7 @@ const Movies = () => {
     
   useEffect(() => {
     
-    fetch(`/api/movie`)
+    fetch(`/api/movie/boxoffice`)
       .then((res) => {
         console.log("Response status:", res.status);
         if (!res.ok) {

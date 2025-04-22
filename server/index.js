@@ -4,6 +4,9 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 const PORT = 3001;
+import { syncModels } from "./models/index.js";  
+
+syncModels(); 
 
 const boxOfficeOptions = {
   method: 'GET',
