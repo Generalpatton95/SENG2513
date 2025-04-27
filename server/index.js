@@ -185,30 +185,6 @@ if (genre) {
   }
 });
 
-// New endpoint for autocomplete functionality
-app.get('/api/movie/autocomplete', async (req, res) => {
-  try {
-    const { query = '' } = req.query;
-    
-    if (!query) {
-      return res.status(400).json({ error: 'Query parameter is required' });
-    }
-    
-    const autocompleteOptions = {
-      method: 'GET',
-      url: 'https://imdb236.p.rapidapi.com/imdb/autocomplete',
-      params: { query },
-      headers
-    };
-    
-    const response = await axios.request(autocompleteOptions);
-    const data = response.data.data || response.data;
-    res.json(data);
-  } catch (error) {
-    console.error("Autocomplete fetch error:", error.message);
-    res.status(500).json({ error: 'Failed to fetch autocomplete results' });
-  }
-});
 
 // New endpoint for fetching all available genres
 app.get('/api/movie/genres', async (req, res) => {
@@ -283,29 +259,6 @@ app.get('/api/test/genre', async (req, res) => {
   }
 });
 
-// New endpoint for fetching a movie's rating by its IMDb ID
-app.get('/api/movie/:id/rating', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    if (!id) {
-      return res.status(400).json({ error: 'Movie ID is required' });
-    }
-    
-    const ratingOptions = {
-      method: 'GET',
-      url: `https://imdb236.p.rapidapi.com/imdb/${id}/rating`,
-      headers
-    };
-    
-    const response = await axios.request(ratingOptions);
-    const data = response.data.data || response.data;
-    res.json(data);
-  } catch (error) {
-    console.error("Rating fetch error:", error.message);
-    res.status(500).json({ error: 'Failed to fetch movie rating' });
-  }
-});
 
 // New endpoint for fetching movie details by IMDb ID
 app.get('/api/movie/:id', async (req, res) => {
