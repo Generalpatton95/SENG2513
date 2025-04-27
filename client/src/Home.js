@@ -1,6 +1,7 @@
 import "./Home.css";
 import React from "react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
     const [boxOfficeMovies, setBoxOfficeMovies] = useState([]);
@@ -66,7 +67,7 @@ const Home = () => {
     if (top250Loading) return <div>Loading Top 250 movies...</div>;
     if (top250Error) return <div>Error loading Top 250: {top250Error}</div>;
 
-    const isCentered = boxOfficeMovies.length < 10;
+    const isCentered = boxOfficeMovies.length < 8;
     const featuredMovie = boxOfficeMovies.length > 0 ? boxOfficeMovies[0] : null;
 
     return (
@@ -83,17 +84,20 @@ const Home = () => {
                 <div className="hero-content">
                     <div className="movie-poster">
                         {featuredMovie && featuredMovie.primaryImage ? (
-                            <img
-                                src={featuredMovie.primaryImage}
-                                alt={featuredMovie.primaryTitle || "Featured Movie"}
-                                className="hero-poster"
-                            />
+                            <Link to={`/movie/${featuredMovie.id}`}>
+                                <img
+                                    src={featuredMovie.primaryImage}
+                                    alt={featuredMovie.primaryTitle || "Featured Movie"}
+                                    className="hero-poster"
+                                />
+                            </Link>
                         ) : (
                             "Movie Poster"
                         )}
                     </div>
                     <h2>{featuredMovie ? featuredMovie.primaryTitle : "Movie Title"}</h2>
                     <p>{featuredMovie ? featuredMovie.description : "Movie description"}</p>
+                     
                 </div>
             </section>
 
@@ -104,17 +108,19 @@ const Home = () => {
                 <div className="movie-list">
                         {boxOfficeMovies.map((movie, index) => (
                             <div key={index} className="movie-card">
-                                <div className="movie-poster">
-                                    {movie.primaryImage ? (
-                                        <img
-                                            src={movie.primaryImage}
-                                            alt={movie.primaryTitle || "Movie Poster"}
-                                        />
-                                    ) : (
-                                        "Movie Poster"
-                                    )}
-                                </div>
-                                <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
+                                <Link to={`/movie/${movie.id}`} className="movie-link">
+                                    <div className="movie-poster">
+                                        {movie.primaryImage ? (
+                                            <img
+                                                src={movie.primaryImage}
+                                                alt={movie.primaryTitle || "Movie Poster"}
+                                            />
+                                        ) : (
+                                            "Movie Poster"
+                                        )}
+                                    </div>
+                                    <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
+                                </Link>
                             </div>
                         ))}
                     </div>
@@ -130,17 +136,19 @@ const Home = () => {
                     <div className="movie-list">
                         {popularMovies.map((movie, index) => (
                             <div key={index} className="movie-card">
-                                <div className="movie-poster">
-                                    {movie.primaryImage ? (
-                                        <img
-                                            src={movie.primaryImage}
-                                            alt={movie.primaryTitle || "Movie Poster"}
-                                        />
-                                    ) : (
-                                        "Movie Poster"
-                                    )}
-                                </div>
-                                <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
+                                <Link to={`/movie/${movie.id}`} className="movie-link">
+                                    <div className="movie-poster">
+                                        {movie.primaryImage ? (
+                                            <img
+                                                src={movie.primaryImage}
+                                                alt={movie.primaryTitle || "Movie Poster"}
+                                            />
+                                        ) : (
+                                            "Movie Poster"
+                                        )}
+                                    </div>
+                                    <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
+                                </Link>
                             </div>
                         ))}
                     </div>
@@ -156,17 +164,19 @@ const Home = () => {
                     <div className="movie-list">
                         {top250.map((movie, index) => (
                             <div key={index} className="movie-card">
-                                <div className="movie-poster">
-                                    {movie.primaryImage ? (
-                                        <img
-                                            src={movie.primaryImage}
-                                            alt={movie.primaryTitle || "Movie Poster"}
-                                        />
-                                    ) : (
-                                        "Movie Poster"
-                                    )}
-                                </div>
-                                <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
+                                <Link to={`/movie/${movie.id}`} className="movie-link">
+                                    <div className="movie-poster">
+                                        {movie.primaryImage ? (
+                                            <img
+                                                src={movie.primaryImage}
+                                                alt={movie.primaryTitle || "Movie Poster"}
+                                            />
+                                        ) : (
+                                            "Movie Poster"
+                                        )}
+                                    </div>
+                                    <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
+                                </Link>
                             </div>
                         ))}
                     </div>

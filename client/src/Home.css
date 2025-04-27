@@ -112,7 +112,22 @@
     flex-wrap: nowrap;
 }
 
-
+movie-card {
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  .movie-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
 
 .movie-card {
     background-color: #1e1e1e;

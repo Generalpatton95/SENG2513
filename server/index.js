@@ -9,7 +9,7 @@ const boxOfficeOptions = {
   method: 'GET',
   url: 'https://imdb236.p.rapidapi.com/imdb/top-box-office',
   headers: {
-    'x-rapidapi-key': '04af0fd518msh9d4bdf0e758a66cp1ddc6cjsn53bc644d704c',
+    'x-rapidapi-key': 'c07d5b540fmsh06d48509516eda8p15cf75jsn5d66c8561424',
     'x-rapidapi-host': 'imdb236.p.rapidapi.com'
   }
 };
@@ -18,7 +18,7 @@ const popularOptions = {
   method: 'GET',
   url: 'https://imdb236.p.rapidapi.com/imdb/most-popular-movies',
   headers: {
-    'x-rapidapi-key': '04af0fd518msh9d4bdf0e758a66cp1ddc6cjsn53bc644d704c',
+    'x-rapidapi-key': 'c07d5b540fmsh06d48509516eda8p15cf75jsn5d66c8561424',
     'x-rapidapi-host': 'imdb236.p.rapidapi.com'
   }
 };
@@ -27,7 +27,7 @@ const top250Options = {
   method: 'GET',
   url: 'https://imdb236.p.rapidapi.com/imdb/top250-movies',
   headers: {
-    'x-rapidapi-key': '04af0fd518msh9d4bdf0e758a66cp1ddc6cjsn53bc644d704c',
+    'x-rapidapi-key': 'c07d5b540fmsh06d48509516eda8p15cf75jsn5d66c8561424',
     'x-rapidapi-host': 'imdb236.p.rapidapi.com'
   }
 };
@@ -66,5 +66,41 @@ app.get('/api/movie/top250', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch Top 250 data' });
   }
 });
+
+// New endpoint to get movie details by ID
+app.get('/api/movie/:id', async (req, res) => {
+  const movieId = req.params.id;
+  
+  try {
+    
+    const [boxOfficeRes, popularRes, top250Res] = await Promise.all([
+      axios.request(boxOfficeOptions),
+      axios.request(popularOptions),
+      axios.request(top250Options)
+    ]);
+    
+    const boxOfficeData = boxOfficeRes.data.data || boxOfficeRes.data;
+    const popularData = popularRes.data.data || popularRes.data;
+    const top250Data = top250Res.data.data || top250Res.data;
+    
+    // Combine all movie lists and find the requested movie
+    const allMovies = [
+      ...boxOfficeData,
+      ...popularData,
+      ...top250Data
+    ];
+    
+    const movie = allMovies.find(m => m.id === movieId);
+    
+    if (movie) {
+      res.json(movie);
+    } else {
+      res.status(404).json({ error: 'Movie not found' });
+    }
+  } catch (error) {
+    console.error("Movie details fetch error:", error.message);
+    res.status(500).json({ error: 'Failed to fetch movie details' });
+  }
+}); 
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
