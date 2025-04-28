@@ -260,7 +260,8 @@ app.get('/api/test/genre', async (req, res) => {
   }
 });
 
-// New endpoint to get movie details by ID
+
+// New endpoint for fetching movie details by IMDb ID
 app.get('/api/movie/:id', async (req, res) => {
   try {
     const { id } = req.params;
