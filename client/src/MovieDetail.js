@@ -1,151 +1,220 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import "./MovieDetail.css";
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import './MovieDetail.css';
 
 const MovieDetail = () => {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // API base URL
+  const API_BASE_URL = "http://localhost:3001";
 
   useEffect(() => {
+    // Only fetch if we have a movieId
+    if (!movieId) {
+      setError("No movie ID provided");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
-
-    // Direct endpoint for movie details
-    fetch(`/api/movie/${movieId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-        return res.json();
+    
+    // Set a timeout in case the API request hangs
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setError("Request timed out. The API may be experiencing issues.");
+    }, 10000);
+    
+    // Fetch movie details
+    fetch(`${API_BASE_URL}/api/movie/${movieId}`)
+      .then(response => {
+        clearTimeout(timeoutId);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
       })
-      .then((data) => {
-        console.log("Movie data received:", data);
+      .then(data => {
         setMovie(data);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Failed to fetch movie details:", error);
-        
-        // Fallback: try to find the movie in all categories
-        Promise.all([
-          fetch('/api/movie/boxoffice').then(res => res.ok ? res.json() : []),
-          fetch('/api/movie/popular').then(res => res.ok ? res.json() : []),
-          fetch('/api/movie/top250').then(res => res.ok ? res.json() : [])
-        ])
-        .then(([boxOffice, popular, top250]) => {
-          // Combine all results and look for the movie
-          const allMovies = [...boxOffice, ...popular, ...top250];
-          const foundMovie = allMovies.find(m => m.id === movieId);
-          
-          if (foundMovie) {
-            setMovie(foundMovie);
-            setLoading(false);
-          } else {
-            setError("Movie not found");
-            setLoading(false);
-          }
-        })
-        .catch(fallbackError => {
-          setError("Failed to load movie: " + fallbackError.message);
-          setLoading(false);
-        });
+      .catch(err => {
+        clearTimeout(timeoutId);
+        console.error("Error fetching movie details:", err);
+        setError(`Failed to load movie details: ${err.message}`);
+        setLoading(false);
       });
-  }, [movieId]);
+      
+    return () => clearTimeout(timeoutId);
+  }, [movieId, API_BASE_URL]);
 
-  if (loading) return <div className="loading">Loading movie details...</div>;
-  if (error) return (
-    <div className="error-container">
-      <div className="error-message">Error: {error}</div>
-      <Link to="/" className="back-link">Return to Home</Link>
-    </div>
-  );
-  if (!movie) return (
-    <div className="error-container">
-      <div className="error-message">Movie not found</div>
-      <Link to="/" className="back-link">Return to Home</Link>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading movie details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error</h2>
+        <p>{error}</p>
+        <Link to="/" className="back-button">Back to Home</Link>
+      </div>
+    );
+  }
+
+  if (!movie) {
+    return (
+      <div className="not-found-container">
+        <h2>Movie Not Found</h2>
+        <p>We couldn't find any movie with the provided ID.</p>
+        <Link to="/" className="back-button">Back to Home</Link>
+      </div>
+    );
+  }
+
+  // Format runtime to hours and minutes
+  const formatRuntime = (minutes) => {
+    if (!minutes || isNaN(minutes)) return "N/A";
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}m`;
+  };
+
+  // Check if we have a valid object with the expected properties
+  const hasValidData = movie && movie.primaryTitle;
 
   return (
-    <div className="movie-details-container">
-      <div className="back-button">
-        <Link to="/">← Back to Movies</Link>
-      </div>
-      
-      <div className="movie-details-content">
-        <div className="movie-poster-large">
-          {movie.primaryImage ? (
-            <img
-              src={movie.primaryImage}
-              alt={movie.primaryTitle || "Movie Poster"}
-            />
-          ) : (
-            <div className="placeholder-poster">No Poster Available</div>
-          )}
+    <div className="movie-detail-container">
+      {!hasValidData ? (
+        <div className="error-message">
+          <p>Invalid movie data received from server.</p>
+          <Link to="/" className="back-button">Back to Home</Link>
         </div>
-        
-        <div className="movie-info">
-          <h1>{movie.primaryTitle}</h1>
-          
-          {movie.releaseDate && (
-            <div className="info-row">
-              <span className="label">Release Year:</span>
-              <span>{movie.releaseDate}</span>
+      ) : (
+        <>
+          <div className="movie-detail-header" 
+               style={{
+                 backgroundImage: movie.primaryImage ? 
+                   `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url(${movie.primaryImage})` : 
+                   'linear-gradient(to right, #141e30, #243b55)'
+               }}>
+            <div className="movie-detail-content">
+              <div className="movie-detail-poster">
+                {movie.primaryImage ? (
+                  <img src={movie.primaryImage} alt={movie.primaryTitle} />
+                ) : (
+                  <div className="no-poster">No Poster Available</div>
+                )}
+              </div>
+              <div className="movie-detail-info">
+                <h1>{movie.primaryTitle}</h1>
+                
+                <div className="movie-meta">
+                  {movie.contentRating && <span className="movie-rating">{movie.contentRating}</span>}
+                </div>
+                
+                {movie.genres && movie.genres.length > 0 && (
+                  <div className="movie-genres">
+                    {movie.genres.map((genre, index) => (
+                      <span key={index} className="genre-tag">{genre}</span>
+                    ))}
+                  </div>
+                )}
+                
+                {movie.averageRating && (
+                  <div className="movie-score">
+                    <span className="score-value">{movie.averageRating}</span>
+                    <span className="score-label">IMDb</span>
+                  </div>
+                )}
+                
+                {movie.description && (
+                  <div className="movie-description">
+                    <p>{movie.description}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
+          </div>
           
-          {movie.runtimeMinutes && (
-            <div className="info-row">
-              <span className="label">Runtime:</span>
-              <span>{movie.runtimeMinutes} minutes</span>
-            </div>
-          )}
+          <div className="movie-detail-body">
+            {/* Cast section */}
+            {movie.cast && movie.cast.length > 0 && (
+              <section className="movie-cast">
+                <h2>Cast</h2>
+                <div className="cast-list">
+                  {movie.cast.map((cast, index) => (
+                    <div key={index} className="cast-member">
+                      <div className="cast-info">
+                        <p className="cast-name">{cast.fullName}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+            
+            {/* Crew/Directors section */}
+            {(movie.directors || movie.writers) && (
+              <section className="movie-crew">
+                {movie.directors && (
+                  <div className="crew-section">
+                    <h2>Director{movie.directors.split(',').length > 1 ? 's' : ''}</h2>
+                    <p>{movie.directors}</p>
+                  </div>
+                )}
+                
+                {movie.writers && (
+                  <div className="crew-section">
+                    <h2>Writer{movie.writers.split(',').length > 1 ? 's' : ''}</h2>
+                    <p>{movie.writers}</p>
+                  </div>
+                )}
+              </section>
+            )}
+            
+            {/* Additional information section */}
+            <section className="movie-additional">
+              <div className="additional-grid">
+               
+                
+                {movie.runtimeMinutes && (
+                  <div className="additional-item">
+                    <h3>Runtime Minutes</h3>
+                    <p>{formatRuntime(movie.runtimeMinutes)} </p>
+                  </div>
+                )}
+                
+                {movie.releaseDate && (
+                  <div className="additional-item">
+                    <h3>Release Date</h3>
+                    <p>{movie.releaseDate}</p>
+                  </div>
+                )}
+                
+                {movie.budget && (
+                  <div className="additional-item">
+                    <h3>Budget</h3>
+                    <p>{movie.budget}</p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
           
-          {movie.genres && movie.genres.length > 0 && (
-            <div className="info-row">
-              <span className="label">Genres:</span>
-              <span>{movie.genres.join(", ")}</span>
-            </div>
-          )}
-          
-          {movie.averageRating && (
-            <div className="info-row">
-              <span className="label">IMDb Rating:</span>
-              <span>{movie.averageRating}/10</span> 
-            </div>
-          )}
-          
-          {movie.description && (
-            <div className="movie-description">
-              <h3>Description</h3> 
-              <p>{movie.description}</p>
-            </div>
-          )}
-          
-          {movie.cast && movie.cast.length > 0 && (
-            <div className="movie-cast">
-              <h3>Cast</h3>
-              <ul>
-                {movie.cast.slice(0, 5).map((actor, index) => (
-                  <li key={index}>{actor}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          
-          
-          {movie.directors && movie.directors.length > 0 && (
-            <div className="movie-directors">
-              <h3>Directors</h3>
-              <ul>
-              {movie.directors.map((director, index) => (
-                  <li key={index}>{director}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      </div>
+          <div className="back-section">
+            <Link to="/" className="back-button">Back to Home</Link>
+          </div>
+        </>
+      )}
     </div>
   );
 };
