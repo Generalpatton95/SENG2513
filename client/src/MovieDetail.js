@@ -1,3 +1,4 @@
+// Add console logs to debug API response
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './MovieDetail.css';
@@ -19,6 +20,7 @@ const MovieDetail = () => {
       return;
     }
 
+    console.log("Fetching movie with ID:", movieId); // Debug log
     setLoading(true);
     setError(null);
     
@@ -38,6 +40,7 @@ const MovieDetail = () => {
         return response.json();
       })
       .then(data => {
+        console.log("Received movie data:", data); // Debug log
         setMovie(data);
         setLoading(false);
       })
@@ -50,6 +53,7 @@ const MovieDetail = () => {
       
     return () => clearTimeout(timeoutId);
   }, [movieId, API_BASE_URL]);
+
 
   if (loading) {
     return (

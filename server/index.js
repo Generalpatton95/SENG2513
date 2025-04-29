@@ -262,6 +262,7 @@ app.get('/api/test/genre', async (req, res) => {
 
 
 // New endpoint for fetching movie details by IMDb ID
+// Replace your existing /api/movie/:id endpoint with this improved version
 app.get('/api/movie/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -276,50 +277,72 @@ app.get('/api/movie/:id', async (req, res) => {
       method: 'GET',
       url: `https://imdb236.p.rapidapi.com/imdb/${id}/details`,
       headers,
-      timeout: 10000
+      timeout: 15000 // Increased timeout for potentially slow API
     };
     
     // First, try to get detailed movie information
     try {
+      console.log(`Making API request to: ${movieDetailsOptions.url}`);
       const response = await axios.request(movieDetailsOptions);
-      console.log(`Successfully retrieved details for movie ID: ${id}`);
+      console.log(`API Response status: ${response.status}`);
       
       // Extract data with fallbacks for different API response structures
       let movieData = {};
+      
       if (response.data && response.data.data) {
         movieData = response.data.data;
       } else if (response.data) {
         movieData = response.data;
       }
       
+      // Ensure the movie has an id property
+      if (!movieData.id) {
+        movieData.id = id;
+      }
+      
+      // Debug - log the structure of the response
+      console.log(`Movie data fields: ${Object.keys(movieData).join(', ')}`);
+      
       return res.json(movieData);
     } catch (detailsError) {
-      console.error(`Could not get details for ${id}, falling back to search in cached movies`, detailsError.message);
+      console.error(`Could not get details for ${id}:`, detailsError.message);
+      
+      // Log the specific error for debugging
+      if (detailsError.response) {
+        console.error("API Error Details:", {
+          status: detailsError.response.status,
+          statusText: detailsError.response.statusText
+        });
+      }
+      
+      console.log("Falling back to search in cached movies");
       
       // Fallback: Search for the movie in our cached lists
       try {
-        const [boxOfficeRes, popularRes, top250Res ] = await Promise.all([
+        const [boxOfficeRes, popularRes, top250Res] = await Promise.all([
           axios.request(boxOfficeOptions),
           axios.request(popularOptions),
-          axios.request(top250Options),
-          
-
+          axios.request(top250Options)
         ]);
         
         const boxOfficeData = boxOfficeRes.data.data || boxOfficeRes.data || [];
         const popularData = popularRes.data.data || popularRes.data || [];
         const top250Data = top250Res.data.data || top250Res.data || [];
         
-        
         // Combine all movie lists and find the requested movie
         const allMovies = [
           ...boxOfficeData,
           ...popularData,
-          ...top250Data,
-           
+          ...top250Data
         ];
         
-        const movie = allMovies.find(m => m.id === id);
+        // Try to find an exact ID match
+        let movie = allMovies.find(m => m.id === id);
+        
+        // If not found, try with string comparison
+        if (!movie) {
+          movie = allMovies.find(m => String(m.id) === String(id));
+        }
         
         if (movie) {
           console.log(`Found movie ${id} in cached lists`);

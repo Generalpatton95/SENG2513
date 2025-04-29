@@ -61,27 +61,45 @@ const Navbar = () => {
         );
     };
 
+// Replace your existing handleSearch function with this improved version
 const handleSearch = () => {
-  // Construct search URL with query and selected genres
-  const params = new URLSearchParams();
-  
-  // Add search query if present
-  if (searchQuery.trim()) {
-    params.append('query', searchQuery.trim());
-  }
-  
-  // Add genre if selected
-  if (selectedGenres.length > 0) {
-    // For simplicity, just use the first selected genre
-    // The IMDb API seems to only support one genre at a time
-    params.append('genre', selectedGenres[0]);
-    console.log(`Using genre: ${selectedGenres[0]}`);
-  }
-  
-  // Navigate to search results page with query parameters
-  const searchPath = params.toString() ? `/search?${params.toString()}` : '/Movies';
-  navigate(searchPath);
-};
+    // Construct search URL with query and selected genres
+    const params = new URLSearchParams();
+    
+    // Add search query if present
+    if (searchQuery.trim()) {
+      params.append('query', searchQuery.trim());
+    }
+    
+    // Add genre if selected
+    if (selectedGenres.length > 0) {
+      // For the API, use only the first genre since it only supports one genre at a time
+      params.append('genre', selectedGenres[0]);
+      console.log(`Using primary genre for API: ${selectedGenres[0]}`);
+      
+      // Store all selected genres in session storage for client-side filtering
+      if (selectedGenres.length > 1) {
+        console.log(`Storing ${selectedGenres.length} genres for client-side filtering`);
+        sessionStorage.setItem('selectedGenres', JSON.stringify(selectedGenres));
+      } else {
+        sessionStorage.removeItem('selectedGenres');
+      }
+    } else {
+      // Clear any stored genres when no genres are selected
+      sessionStorage.removeItem('selectedGenres');
+    }
+    
+    // Check if we have any parameters before navigating
+    if (params.toString()) {
+      // Navigate to search results page with query parametersS
+      console.log(`Navigating to: /search?${params.toString()}`);
+      navigate(`/search?${params.toString()}`);
+    } else {
+      // If no parameters, navigate to the Movies page instead of an empty search
+      console.log('No search parameters provided, navigating to Movies page');
+      navigate('/Movies');
+    }
+  };
 
     // Handle Enter key in search input
     const handleSearchKeyDown = (e) => {
