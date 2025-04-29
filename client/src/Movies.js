@@ -296,7 +296,7 @@ const Movies = () => {
                 <h3 className="movie-title">{movie.primaryTitle || "Untitled"}</h3>
                 {movie.genres && movie.genres.length > 0 && (
                   <div className="movie-genres">
-                    {movie.genres.slice(0, 2).map((genre, i) => (
+                    {movie.genres.map((genre, i) => (
                       <span key={i} className="movie-genre">{genre}</span>
                     ))}
                   </div>

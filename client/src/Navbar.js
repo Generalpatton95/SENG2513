@@ -54,12 +54,10 @@ const Navbar = () => {
     };
 
     const toggleGenreSelection = (genre) => {
-        setSelectedGenres(prev =>
-            prev.includes(genre)
-                ? prev.filter(g => g !== genre)
-                : [...prev, genre]
+        setSelectedGenres(prev => 
+          prev.includes(genre) ? [] : [genre]
         );
-    };
+      };
 
 // Replace your existing handleSearch function with this improved version
 const handleSearch = () => {
@@ -113,15 +111,14 @@ const handleSearch = () => {
         <>
             <div>
                 <nav className="navbar">
-                    <Link to="/">
-                        <img src="/mlogo192.png" alt="Movie App Logo" className="nav-logo" />
-                    </Link>
-                    <ul className="nav-links">
-                        <li><Link to="/">Home</Link></li>
-                        <li><Link to="/Companies">Companies</Link></li>
-                        <li><Link to="/Users">Users</Link></li>
-                        <li><Link to="/Movies">Movies</Link></li>
-                    </ul>
+                <div className="nav-left">
+                <Link to="/">
+                    <img src="/mlogo192.png" alt="Movie App Logo" className="nav-logo" />
+                </Link>
+                <ul className="nav-links">
+                    <li><Link to="/" className="home-icon"><span className="home-icon">🏠︎</span></Link></li>
+                </ul>
+                </div>
 
                     <div className="search-container">
                         <input 
@@ -139,10 +136,7 @@ const handleSearch = () => {
                                 className={`dropdown-button ${selectedGenres.length > 0 ? "active" : ""}`}
                                 title="Filter by genres"
                             >
-                                {showDropdown ? "▲" : "▼"}
-                                {selectedGenres.length > 0 && (
-                                    <span className="dropdown-counter">{selectedGenres.length}</span>
-                                )}
+                                {showDropdown ? "▲" : "▼"}               
                             </button>
 
                             {showDropdown && (
