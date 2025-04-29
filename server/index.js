@@ -34,6 +34,12 @@ const top250Options = {
   headers
 };
 
+const movieDetailsOptions = {
+  method: 'GET',
+  url: 'https://imdb236.p.rapidapi.com/imdb/', // We will append the movie ID dynamically
+  headers
+};
+
 app.get('/api/movie/boxoffice', async (req, res) => {
   try {
     const response = await axios.request(boxOfficeOptions);
@@ -70,6 +76,9 @@ app.get('/api/movie/top250', async (req, res) => {
 });
 
 
+
+
+
 // Search endpoint with correct structure
 app.get('/api/movie/search', async (req, res) => {
   try {
@@ -78,6 +87,8 @@ app.get('/api/movie/search', async (req, res) => {
     
     // Set a shorter timeout for API requests
     const apiTimeout = 8000; // 8 seconds
+
+    
     
 // Handle genre search
 if (genre) {
@@ -257,6 +268,24 @@ app.get('/api/test/genre', async (req, res) => {
       message: error.message,
       details: error.response ? error.response.data : null
     });
+  }
+});
+
+app.get('/api/movie/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const options = {
+      ...movieDetailsOptions,
+      url: `${movieDetailsOptions.url}${id}` // e.g., https://imdb236.p.rapidapi.com/imdb/tt0816692
+    };
+
+    const response = await axios.request(options);
+    const data = response.data.data || response.data;
+    res.json(data);
+  } catch (error) {
+    console.error("Simple movie details fetch error:", error.message);
+    res.status(500).json({ error: 'Failed to fetch movie details' });
   }
 });
 

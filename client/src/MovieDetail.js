@@ -13,46 +13,43 @@ const MovieDetail = () => {
   const API_BASE_URL = "http://localhost:3001";
 
   useEffect(() => {
-    // Only fetch if we have a movieId
     if (!movieId) {
       setError("No movie ID provided");
       setLoading(false);
       return;
     }
-
-    console.log("Fetching movie with ID:", movieId); // Debug log
+  
     setLoading(true);
     setError(null);
-    
-    // Set a timeout in case the API request hangs
+  
     const timeoutId = setTimeout(() => {
       setLoading(false);
       setError("Request timed out. The API may be experiencing issues.");
     }, 10000);
-    
-    // Fetch movie details
-    fetch(`${API_BASE_URL}/api/movie/${movieId}`)
-      .then(response => {
-        clearTimeout(timeoutId);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log("Received movie data:", data); // Debug log
+  
+    async function fetchMovie() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/movie/${movieId}`);
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const data = await response.json();
+        console.log("Received simple movie data:", data);
         setMovie(data);
         setLoading(false);
-      })
-      .catch(err => {
         clearTimeout(timeoutId);
+      } catch (err) {
         console.error("Error fetching movie details:", err);
         setError(`Failed to load movie details: ${err.message}`);
         setLoading(false);
-      });
-      
+        clearTimeout(timeoutId);
+      }
+    }
+  
+    fetchMovie();
+  
     return () => clearTimeout(timeoutId);
   }, [movieId, API_BASE_URL]);
+  
+
 
 
   if (loading) {
@@ -150,64 +147,60 @@ const MovieDetail = () => {
           </div>
           
           <div className="movie-detail-body">
-            {/* Cast section */}
+            {/* Cast Section */}
             {movie.cast && movie.cast.length > 0 && (
               <section className="movie-cast">
                 <h2>Cast</h2>
                 <div className="cast-list">
-                  {movie.cast.map((cast, index) => (
+                  {movie.cast.map((member, index) => (
                     <div key={index} className="cast-member">
                       <div className="cast-info">
-                        <p className="cast-name">{cast.fullName}</p>
+                        <p className="cast-name">{member.fullName}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </section>
             )}
-            
-            {/* Crew/Directors section */}
+
+            {/* Crew (Directors and Writers) Section */}
             {(movie.directors || movie.writers) && (
               <section className="movie-crew">
-                {movie.directors && (
+                {movie.directors && movie.directors.length > 0 && (
                   <div className="crew-section">
-                    <h2>Director{movie.directors.split(',').length > 1 ? 's' : ''}</h2>
-                    <p>{movie.directors}</p>
+                    <h2>Director{movie.directors.length > 1 ? "s" : ""}</h2>
+                    <p>{movie.directors.map(d => d.fullName).join(", ")}</p>
                   </div>
                 )}
-                
-                {movie.writers && (
+
+                {movie.writers && movie.writers.length > 0 && (
                   <div className="crew-section">
-                    <h2>Writer{movie.writers.split(',').length > 1 ? 's' : ''}</h2>
-                    <p>{movie.writers}</p>
+                    <h2>Writer{movie.writers.length > 1 ? "s" : ""}</h2>
+                    <p>{movie.writers.map(w => w.fullName).join(", ")}</p>
                   </div>
                 )}
               </section>
             )}
-            
-            {/* Additional information section */}
+
+            {/* Additional Info Section */}
             <section className="movie-additional">
               <div className="additional-grid">
-               
-                
                 {movie.runtimeMinutes && (
                   <div className="additional-item">
-                    <h3>Runtime Minutes</h3>
-                    <p>{formatRuntime(movie.runtimeMinutes)} </p>
+                    <h3>Runtime</h3>
+                    <p>{formatRuntime(movie.runtimeMinutes)}</p>
                   </div>
                 )}
-                
                 {movie.releaseDate && (
                   <div className="additional-item">
                     <h3>Release Date</h3>
-                    <p>{movie.releaseDate}</p>
+                    <p>{new Date(movie.releaseDate).toLocaleDateString('en-US')}</p>
                   </div>
                 )}
-                
                 {movie.budget && (
                   <div className="additional-item">
                     <h3>Budget</h3>
-                    <p>{movie.budget}</p>
+                    <p>${Number(movie.budget).toLocaleString()}</p>
                   </div>
                 )}
               </div>
